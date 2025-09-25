@@ -16,12 +16,12 @@ class WelcomePage extends StatelessWidget {
           // remove Expanded, Center is enough
           child: SingleChildScrollView(
             // allows scrolling on small screens
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(56),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset('assets/images/welcome_image.png'),
+                Image.asset('assets/images/welcome_image.png', width: 300),
                 const SizedBox(height: 16),
                 Text(
                   "Welcome to".capitalized,

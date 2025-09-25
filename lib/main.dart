@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lemon',
+      title: 'Lem0n',
       theme: lightTheme,
       home: AuthenticationPage(),
       debugShowCheckedModeBanner: false,

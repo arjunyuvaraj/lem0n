@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/components/app_text_field.dart';
 import 'package:lemon/components/primary_app_button.dart';
 import 'package:lemon/services/authentication_service.dart';
@@ -15,43 +14,22 @@ class AdminCodePage extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsetsGeometry.all(24),
+            padding: EdgeInsetsGeometry.all(56),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // HEADER - Welcome header
-                Image(image: AssetImage('assets/images/welcome_image.png')),
+                Image(
+                  image: AssetImage('assets/images/welcome_image.png'),
+                  width: 300,
+                ),
                 Text(
                   "Welcome to".capitalized,
                   style: context.text.headlineSmall,
                 ),
                 Text("lemon".capitalized, style: context.text.headlineLarge),
                 const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Are you ".capitalized,
-                      style: context.text.bodyMedium,
-                    ),
-                    Text(
-                      "really, ".capitalized,
-                      style: GoogleFonts.workSans(
-                        textStyle: context.text.bodyMedium,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    Text("an ".capitalized, style: context.text.bodyMedium),
-                    Text(
-                      "admin?".capitalized,
-                      style: GoogleFonts.workSans(
-                        textStyle: context.text.bodyMedium,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
                 // FORM - Get the admin code, and send it to the AuthService
                 AppTextField(
                   hintText: "Administration Code",
