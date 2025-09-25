@@ -47,4 +47,3 @@ app.*.map.json
 # API Keys
 **/firebase_options.dart
 android/app/google-services.json
-
