@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lemon 🍋 — Fresh & Minimal</title>
+    <meta name="description" content="Lemon — a fresh, minimal app designed to make your life simpler." />
+    <style>
+        :root {
+            --bg: #fffdf7;
+            --accent: #FFD54A;
+            --muted: #6b6b6b;
+            --card: #ffffff;
+            --glass: rgba(255, 255, 255, 0.6);
+            --radius: 14px;
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(180deg, #fffefc 0%, #fff9ec 100%);
+            color: #111;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(34, 34, 34, 0.08);
+            padding: 32px;
+            display: grid;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #fff3cc, #ffd54a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 28px;
+            box-shadow: 0 6px 18px rgba(255, 213, 74, 0.18), inset 0 -6px 10px rgba(0, 0, 0, 0.03);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -0.02em
+        }
+
+        p.lead {
+            margin: 6px 0 0;
+            color: var(--muted)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--glass);
+            border-radius: 12px;
+            padding: 16px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 6px 18px rgba(30, 30, 30, 0.03);
+        }
+
+        ul {
+            margin: 8px 0 0;
+            padding-left: 20px;
+            color: var(--muted)
+        }
+
+        pre {
+            background: #f7f6f3;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: var(--mono);
+            font-size: 13px;
+            overflow: auto;
+            margin: 10px 0 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 0;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #ffd54a, #ffca28);
+            color: #1a1a1a;
+            box-shadow: 0 8px 24px rgba(255, 197, 38, 0.18);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        footer {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px
+        }
+
+        @media (max-width:720px) {
+            .grid {
+                grid-template-columns: 1fr
+            }
+
+            header {
+                gap: 12px
+            }
+
+            .logo {
+                width: 56px;
+                height: 56px;
+                font-size: 22px;
+                border-radius: 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container" role="main">
+        <header>
+            <div class="logo" aria-hidden><img src="/assets/icon.png" width="100" /></div>
+            <div>
+                <h1>Lem0n</h1>
+                <p class="lead">Fresh. Minimal. Delightfully simple — an app designed to make everyday tasks feel
+                    lighter.</p>
+            </div>
+        </header>
+
+        <section class="grid" aria-label="features and getting started">
+            <div class="card">
+                <h3>Features</h3>
+                <ul>
+                    <li>Lightweight and intuitive interface</li>
+                    <li>Fast performance with minimal distractions</li>
+                    <li>Designed for clarity — focus on what matters</li>
+                </ul>
+
+                <div class="actions" style="margin-top:12px;">
+                    <a class="btn btn-primary" href="#" role="button">Get started</a>
+                    <a class="btn btn-ghost" href="https://github.com/your-username/lemon" target="_blank"
+                        rel="noopener">View on GitHub</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🚀 Getting Started</h3>
+                <p style="margin:6px 0 0;color:var(--muted)">Clone the repo and set up locally:</p>
+                <pre><code>git clone https://github.com/your-username/lemon.git
+cd lemon
+# follow platform-specific setup instructions in /docs</code></pre>
+
+                <h4 style="margin-top:12px">📌 About</h4>
+                <p style="margin:6px 0 0;color:var(--muted)">
+                    Lemon
