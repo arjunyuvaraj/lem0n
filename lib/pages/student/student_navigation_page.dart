@@ -21,13 +21,11 @@ class StudentNavigationPage extends StatefulWidget {
 
 class StudentNavigationPageState extends State<StudentNavigationPage> {
   late int _selectedIndex;
-  String? _currentStore;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
-    _currentStore = widget.initialStore;
     Codes().setStatus(true);
   }
 
@@ -37,15 +35,12 @@ class StudentNavigationPageState extends State<StudentNavigationPage> {
   /// Public: switch to a tab and optionally set the store name for the Line page
   void switchTo({required int index, String? store}) {
     setState(() {
-      if (store != null) _currentStore = store;
       _selectedIndex = index;
     });
   }
 
   Widget _linePage() {
-    return StudentLineInformationPage(
-      lineName: _currentStore ?? widget.initialStore ?? 'Sandwich',
-    );
+    return StudentLineInformationPage();
   }
 
   Widget _buildNavIcon(IconData icon, int index) {

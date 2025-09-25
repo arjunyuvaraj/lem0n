@@ -175,4 +175,14 @@ class LineService {
         .snapshots()
         .map((snapshot) => snapshot.data());
   }
+
+  Stream<Map<String, dynamic>?> getAllLinesStream() {
+    return FirebaseFirestore.instance
+        .collection(Codes().currentSchool)
+        .doc(Codes().currentSchool)
+        .collection("Lines")
+        .doc("Lines")
+        .snapshots()
+        .map((snapshot) => snapshot.data());
+  }
 }

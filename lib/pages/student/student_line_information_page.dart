@@ -6,23 +6,35 @@ import 'package:lemon/components/primary_app_button.dart';
 import 'package:lemon/services/line_service.dart';
 import 'package:lemon/utilities/extensions.dart';
 
-class StudentLineInformationPage extends StatelessWidget {
-  final String lineName;
-  const StudentLineInformationPage({super.key, required this.lineName});
+class StudentLineInformationPage extends StatefulWidget {
+  const StudentLineInformationPage({super.key});
+
+  @override
+  State<StudentLineInformationPage> createState() =>
+      _StudentLineInformationPageState();
+}
+
+class _StudentLineInformationPageState
+    extends State<StudentLineInformationPage> {
+  String? selectedLine;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: StreamBuilder<Map<String, dynamic>?>(
-          // You’ll need a method in LineService that returns a Stream
-          stream: LineService().getLineStream(lineName),
+          stream: LineService().getAllLinesStream(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final line = snapshot.data![lineName];
+            final allLines = snapshot.data!;
+            final lineNames = allLines.keys.toList();
+
+            selectedLine ??= lineNames.first;
+
+            final line = allLines[selectedLine] as Map<String, dynamic>;
             final int waiting = line['waiting'];
             final bool open = line['open'];
             final List queue = line['queue'];
@@ -37,13 +49,28 @@ class StudentLineInformationPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Let's look at ".capitalized),
-                    Text(
-                      lineName.capitalized,
-                      style: GoogleFonts.workSans(
-                        textStyle: context.text.headlineSmall,
-                        color: context.colors.primary,
-                      ),
+
+                    DropdownButton<String>(
+                      value: selectedLine,
+                      items: lineNames.map((name) {
+                        return DropdownMenuItem(
+                          value: name,
+                          child: Text(
+                            name.capitalized,
+                            style: GoogleFonts.workSans(
+                              textStyle: context.text.headlineSmall,
+                              color: context.colors.primary,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedLine = newValue;
+                        });
+                      },
                     ),
+
                     const SizedBox(height: 4),
                     Text(
                       description,
@@ -76,9 +103,9 @@ class StudentLineInformationPage extends StatelessWidget {
                           : "enter line".capitalized,
                       onTap: () {
                         if (isInLine) {
-                          LineService().removeFromLine(lineName, context);
+                          LineService().removeFromLine(selectedLine!, context);
                         } else {
-                          LineService().joinLine(lineName, context);
+                          LineService().joinLine(selectedLine!, context);
                         }
                       },
                     ),
