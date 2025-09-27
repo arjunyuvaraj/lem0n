@@ -8,6 +8,7 @@ class LineCard extends StatelessWidget {
   final int waiting;
   final bool status;
   final GestureTapCallback onTap;
+
   const LineCard({
     super.key,
     required this.title,
@@ -22,58 +23,60 @@ class LineCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        decoration: BoxDecoration(
+          color: context.colors.tertiary,
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: context.colors.tertiary,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        children: [
-                          Text(
-                            title.capitalized,
-                            style: context.text.headlineSmall?.copyWith(
-                              fontSize: 14,
-                            ),
+            // TOP: title + description + status chips
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  // Texts
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title.capitalized,
+                          style: context.text.headlineSmall?.copyWith(
+                            fontSize: 14,
                           ),
-                          Text(description),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(description, style: context.text.bodyMedium),
+                      ],
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          AppChip(
-                            text: (waiting.toString().padLeft(
-                              4,
-                              '0',
-                            )).capitalized,
-                            color: Color(0xFFFFB300),
-                          ),
-                          const SizedBox(height: 6),
-                          status
-                              ? AppChip(
-                                  text: ("open").capitalized,
-                                  color: Color(0xFF2E7D32),
-                                )
-                              : AppChip(
-                                  text: ("closed").capitalized,
-                                  color: Color(0xFFC62828),
-                                ),
-                        ],
-                      ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Chips
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        AppChip(
+                          text: waiting.toString().padLeft(4, '0').capitalized,
+                          color: Color(0xFFFE7F2D),
+                        ),
+                        const SizedBox(height: 6),
+                        AppChip(
+                          text: status
+                              ? "open".capitalized
+                              : "closed".capitalized,
+                          color: status
+                              ? Color(0xFF606c38)
+                              : context.colors.error,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],

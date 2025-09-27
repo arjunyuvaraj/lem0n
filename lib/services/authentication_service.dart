@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,35 +25,62 @@ class AuthenticationService {
   }
 
   // METHOD: Saves the user to firestore
+
   Future<void> saveUserToFirestore({
     required String displayName,
     required String school,
     required String email,
   }) async {
-    // USER: Get the current user
     final user = FirebaseAuth.instance.currentUser;
-
-    // CHECK: Make sure the user is signed in
     if (user == null) return;
 
-    // USER: Get the user's UID
     final uid = user.uid;
+    final studentsRef = FirebaseFirestore.instance
+        .collection(school)
+        .doc(school)
+        .collection("Students");
 
-    // FIRESTORE: Reference to the user's document inside the Students subcollection
-    final userDocRef = FirebaseFirestore.instance
-        .collection(
-          school,
-        ) // top-level collection (e.g. "Bergen County Academies")
-        .doc(school) // document for this school
-        .collection("Students") // subcollection for students
-        .doc(uid); // student's document = uid
+    // STEP 1: Generate a unique 4-character alphanumeric token
+    String token = await _generateUniqueAlphanumericToken(studentsRef);
 
-    // OUTPUT: Set the student's data
+    // STEP 2: Save user data with the token
+    final userDocRef = studentsRef.doc(uid);
     await userDocRef.set({
+      'currentLine': '',
       'displayName': displayName,
-      'school': school,
       'email': email,
+      'school': school,
+      'token': token,
     }, SetOptions(merge: true));
+  }
+
+  Future<String> _generateUniqueAlphanumericToken(
+    CollectionReference studentsRef,
+  ) async {
+    const length = 4;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final random = Random();
+
+    String getRandomToken() {
+      return List.generate(
+        length,
+        (_) => chars[random.nextInt(chars.length)],
+      ).join();
+    }
+
+    for (int i = 0; i < 10000; i++) {
+      final token = getRandomToken();
+
+      final querySnapshot = await studentsRef
+          .where('token', isEqualTo: token)
+          .limit(1)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return token;
+      }
+    }
+    throw Exception(e);
   }
 
   // METHOD: Sign in the user
@@ -215,5 +244,41 @@ class AuthenticationService {
     final user = FirebaseAuth.instance.currentUser!;
     // OUTPUT: Return the UID
     return user.uid;
+  }
+
+  Future<Map<String, dynamic>> getUserByDisplayName(String displayName) async {
+    final currentSchool = Codes().currentSchool;
+    final isStudent = Codes().status;
+
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection(currentSchool)
+        .doc(currentSchool)
+        .collection(isStudent ? "Students" : "Admin")
+        .where("displayName", isEqualTo: displayName)
+        .limit(1) // Since you're only looking for one user
+        .get();
+
+    if (querySnapshot.docs.isEmpty) {
+      throw Exception("User with displayName '$displayName' not found.");
+    }
+
+    return querySnapshot.docs.first.data();
+  }
+
+  Future<Map<String, dynamic>> getUserDataById(String userId) async {
+    final currentSchool = Codes().currentSchool;
+
+    final docRef = FirebaseFirestore.instance
+        .collection(currentSchool)
+        .doc(currentSchool)
+        .collection("Students")
+        .doc(userId);
+
+    final docSnapshot = await docRef.get();
+
+    if (!(docSnapshot.exists)) {
+      throw Exception("User $userId not found");
+    }
+    return docSnapshot.data()!;
   }
 }

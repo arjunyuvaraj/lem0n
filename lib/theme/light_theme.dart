@@ -4,11 +4,11 @@ import 'package:lemon/utilities/extensions.dart';
 
 final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  scaffoldBackgroundColor: Colors.white,
+  scaffoldBackgroundColor: Color(0xFFFFFFFF),
   colorScheme: ColorScheme.light(
-    primary: Color(0xFFf9c74f),
+    primary: Color(0xFFFFBC03),
     secondary: Color(0xFF4A7C59),
-    tertiary: Color(0xFFF5F5F0),
+    tertiary: Color(0xFFF6F5F4),
     surface: Colors.white,
     error: Color(0xFFC62828),
     onError: Colors.white,

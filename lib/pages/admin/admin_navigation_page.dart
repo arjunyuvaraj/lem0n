@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lemon/pages/account_page.dart';
 import 'package:lemon/pages/admin/admin_home_page.dart';
+import 'package:lemon/pages/admin/admin_line_information_page.dart';
 import 'package:lemon/pages/admin/admin_new_line_page.dart';
-import 'package:lemon/pages/credits_page.dart';
+import 'package:lemon/pages/admin/admin_queue_page.dart';
 import 'package:lemon/utilities/codes.dart';
 
 class AdminNavigationPage extends StatefulWidget {
@@ -27,12 +28,24 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
-    pages = [AdminHomePage(), AdminNewLinePage(), AccountPage(), CreditsPage()];
+    pages = [
+      AdminHomePage(),
+      AdminLineInformationPage(),
+      AdminQueuePage(),
+      AdminNewLinePage(),
+      AccountPage(),
+    ];
     Codes().setStatus(false);
   }
 
   void _changeIndex(int index) {
     setState(() => _selectedIndex = index);
+  }
+
+  void switchTo({required int index, String? store}) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   Widget _buildNavIcon(IconData icon, int index) {
@@ -83,9 +96,10 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _buildNavIcon(Icons.home_rounded, 0),
-            _buildNavIcon(Icons.add_rounded, 1),
-            _buildNavIcon(Icons.person_rounded, 2),
-            _buildNavIcon(Icons.info_outline_rounded, 3),
+            _buildNavIcon(Icons.info_outline, 1),
+            _buildNavIcon(Icons.list_rounded, 2),
+            _buildNavIcon(Icons.add_rounded, 3),
+            _buildNavIcon(Icons.person_rounded, 4),
           ],
         ),
       ),

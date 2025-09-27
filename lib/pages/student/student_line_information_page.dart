@@ -25,23 +25,42 @@ class _StudentLineInformationPageState
         child: StreamBuilder<Map<String, dynamic>?>(
           stream: LineService().getAllLinesStream(),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final allLines = snapshot.data!;
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("Something went wrong. Please try again."),
+              );
+            }
+
+            final allLines = snapshot.data ?? {};
+
+            if (allLines.isEmpty) {
+              return const Center(child: Text("No lines available right now."));
+            }
+
+            // Ensure selectedLine is valid
             final lineNames = allLines.keys.toList();
+            if (selectedLine == null || !lineNames.contains(selectedLine)) {
+              selectedLine = lineNames.isNotEmpty ? lineNames.first : null;
+            }
 
-            selectedLine ??= lineNames.first;
+            if (selectedLine == null) {
+              return const Center(child: Text("This line was deleted."));
+            }
 
-            final line = allLines[selectedLine] as Map<String, dynamic>;
-            final int waiting = line['waiting'];
-            final bool open = line['open'];
-            final List queue = line['queue'];
+            // Safely extract line data
+            final line = allLines[selectedLine] as Map<String, dynamic>? ?? {};
+            final int waiting = (line['waiting'] ?? 0) as int;
+            final bool open = (line['open'] ?? false) as bool;
+            final List queue = (line['queue'] ?? []) as List;
+            final String description =
+                (line['description'] ?? "No description") as String;
+
             final user = FirebaseAuth.instance.currentUser;
-            final isInLine = user != null && queue.contains(user.displayName);
-            final String description = line['description'];
-
+            final isInLine = user != null && queue.contains(user.uid);
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -49,28 +68,35 @@ class _StudentLineInformationPageState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Let's look at ".capitalized),
-
-                    DropdownButton<String>(
-                      value: selectedLine,
-                      items: lineNames.map((name) {
-                        return DropdownMenuItem(
-                          value: name,
-                          child: Text(
-                            name.capitalized,
-                            style: GoogleFonts.workSans(
-                              textStyle: context.text.headlineSmall,
-                              color: context.colors.primary,
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedLine,
+                        isExpanded: true,
+                        alignment: Alignment.center,
+                        icon: const SizedBox.shrink(),
+                        items: lineNames.map((name) {
+                          return DropdownMenuItem(
+                            value: name,
+                            alignment: Alignment.center,
+                            child: Text(
+                              name.capitalized,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.workSans(
+                                textStyle: context.text.headlineSmall,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.2,
+                                color: context.colors.primary,
+                              ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectedLine = newValue;
-                        });
-                      },
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedLine = newValue;
+                          });
+                        },
+                      ),
                     ),
-
                     const SizedBox(height: 4),
                     Text(
                       description,
@@ -98,14 +124,21 @@ class _StudentLineInformationPageState
                       buttonColor: isInLine
                           ? context.colors.error
                           : Colors.transparent,
-                      label: isInLine
-                          ? "exit line".capitalized
-                          : "enter line".capitalized,
+                      label: open
+                          ? isInLine
+                                ? "exit line".capitalized
+                                : "enter line".capitalized
+                          : "Line is not open".capitalized,
                       onTap: () {
-                        if (isInLine) {
-                          LineService().removeFromLine(selectedLine!, context);
-                        } else {
-                          LineService().joinLine(selectedLine!, context);
+                        if (open) {
+                          if (isInLine) {
+                            LineService().removeFromLine(
+                              selectedLine!,
+                              context,
+                            );
+                          } else {
+                            LineService().joinLine(selectedLine!, context);
+                          }
                         }
                       },
                     ),

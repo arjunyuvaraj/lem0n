@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/components/line_card.dart';
-import 'package:lemon/services/line_service.dart';
+import 'package:lemon/pages/student/student_navigation_page.dart';
 import 'package:lemon/utilities/codes.dart';
 import 'package:lemon/utilities/extensions.dart';
 
@@ -100,7 +100,14 @@ class AdminHomePage extends StatelessWidget {
                           description: item['description'] ?? "",
                           waiting: item['waiting'] ?? 0,
                           status: item['open'] ?? false,
-                          onTap: () => LineService().openLine(title, context),
+                          onTap: () {
+                            if (!item['open']) return; // guard
+                            final navState = context
+                                .findAncestorStateOfType<
+                                  StudentNavigationPageState
+                                >();
+                            navState?.switchTo(index: 1, store: title);
+                          },
                         );
                       },
                     );

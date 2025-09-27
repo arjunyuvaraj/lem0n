@@ -57,8 +57,6 @@ class LineService {
 
     final lineSnapshot = await linesDocRef.get();
     final lineData = lineSnapshot.data()?[lineName];
-    final userSnapshot = await userDocRef.get();
-    final userData = userSnapshot.data()!;
 
     if (lineData == null) return;
 
@@ -66,7 +64,7 @@ class LineService {
 
     if (await checkLine(lineName, context)) return;
 
-    queue.add(userData['displayName']);
+    queue.add(user.uid);
 
     await linesDocRef.update({
       "$lineName.queue": queue,
@@ -94,19 +92,17 @@ class LineService {
         .doc(Codes().currentSchool)
         .collection("Students")
         .doc(uid);
+
     final lineSnapshot = await linesDocRef.get();
     final lineData = lineSnapshot.data()?[lineName];
-    final userSnapshot = await userDocRef.get();
-    final userData = userSnapshot.data()!;
 
     if (lineData == null) return;
 
     List<dynamic> queue = lineData['queue'] ?? [];
 
-    if (await checkLine(lineName, context)) return;
+    if (!(await checkLine(lineName, context))) return;
 
-    queue.remove(userData['displayName']);
-
+    queue.remove(user.uid);
     await linesDocRef.update({
       "$lineName.queue": queue,
       "$lineName.waiting": queue.length,
@@ -127,6 +123,13 @@ class LineService {
         .get();
 
     final data = linesDoc.data()?[lineName];
+    final userDocRef = FirebaseFirestore.instance
+        .collection(Codes().currentSchool)
+        .doc(Codes().currentSchool)
+        .collection("Students")
+        .doc(user.uid);
+    final userSnapshot = await userDocRef.get();
+    final userData = userSnapshot.data()!;
 
     if (data == null) {
       displayMessageToUser("Line does not exist.", context);
@@ -184,5 +187,37 @@ class LineService {
         .doc("Lines")
         .snapshots()
         .map((snapshot) => snapshot.data());
+  }
+
+  // METHOD: Rename a line
+  Future<void> renameLine(String oldName, String newName) async {
+    final linesDocRef = FirebaseFirestore.instance
+        .collection(Codes().currentSchool)
+        .doc(Codes().currentSchool)
+        .collection("Lines")
+        .doc("Lines");
+
+    final snapshot = await linesDocRef.get();
+    final data = snapshot.data();
+    if (data == null || !data.containsKey(oldName)) return;
+
+    final lineData = data[oldName];
+
+    // Copy old line data to new name
+    await linesDocRef.update({newName: lineData});
+
+    // Delete the old line
+    await linesDocRef.update({oldName: FieldValue.delete()});
+  }
+
+  // METHOD: Delete a line
+  Future<void> deleteLine(String lineName) async {
+    final linesDocRef = FirebaseFirestore.instance
+        .collection(Codes().currentSchool)
+        .doc(Codes().currentSchool)
+        .collection("Lines")
+        .doc("Lines");
+
+    await linesDocRef.update({lineName: FieldValue.delete()});
   }
 }

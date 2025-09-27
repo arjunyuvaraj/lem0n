@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/components/app_loading_circle.dart';
-import 'package:lemon/components/student_line_card.dart';
+import 'package:lemon/components/line_card.dart';
 import 'package:lemon/pages/student/student_navigation_page.dart';
 import 'package:lemon/services/line_service.dart';
 import 'package:lemon/utilities/codes.dart';
@@ -95,15 +95,11 @@ class StudentHomePage extends StatelessWidget {
                         final open = item['open'] ?? false;
                         final waiting = item['waiting'] ?? 0;
                         final description = item['description'] ?? "";
-                        return StudentLineCard(
+                        return LineCard(
                           title: title,
                           description: description,
                           waiting: waiting,
                           status: open,
-                          bottomButtonLabel: open
-                              ? "View Line".capitalized
-                              : "This line is not open".capitalized,
-                          bottomButtonColor: context.colors.secondary,
                           onTap: () {
                             if (!open) return; // guard
                             final navState = context
