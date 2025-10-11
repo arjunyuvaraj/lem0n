@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lemon/pages/admin/admin_navigation_page.dart';
+import 'package:lemon/pages/landing_page.dart';
 import 'package:lemon/pages/student/student_navigation_page.dart';
-import 'package:lemon/pages/welcome_page.dart';
 import 'package:lemon/utilities/codes.dart';
 
 class AuthenticationPage extends StatelessWidget {
@@ -23,7 +23,7 @@ class AuthenticationPage extends StatelessWidget {
           }
           // FIREBASE-AUTH: User is not logged in
           else {
-            return WelcomePage();
+            return LandingPage();
           }
         },
       ),

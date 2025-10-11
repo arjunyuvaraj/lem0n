@@ -5,6 +5,7 @@ import 'package:lemon/pages/admin/admin_line_information_page.dart';
 import 'package:lemon/pages/admin/admin_new_line_page.dart';
 import 'package:lemon/pages/admin/admin_queue_page.dart';
 import 'package:lemon/utilities/codes.dart';
+import 'package:lemon/utilities/extensions.dart';
 
 class AdminNavigationPage extends StatefulWidget {
   final int initialIndex;
@@ -67,21 +68,21 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
           child: pages[_selectedIndex],
         ),
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: context.colors.surface,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(32),
             topRight: Radius.circular(32),
           ),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(25),
-              blurRadius: 12,
+              color: context.colors.onSurface.withAlpha(75),
+              blurRadius: 20,
               offset: const Offset(0, 4),
             ),
           ],

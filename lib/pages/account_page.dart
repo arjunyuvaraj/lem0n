@@ -161,6 +161,12 @@ class AccountPage extends StatelessWidget {
                     label: "Sign Out".capitalized,
                     onTap: () => AuthenticationService().signOut(context),
                   ),
+                  const SizedBox(height: 8),
+                  PrimaryAppButton(
+                    label: "Delete Account".capitalized,
+                    buttonColor: context.colors.error,
+                    onTap: () => AuthenticationService().deleteAccount(context),
+                  ),
                 ],
               );
             },

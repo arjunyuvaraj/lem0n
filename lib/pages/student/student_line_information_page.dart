@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/components/info_row.dart';
 import 'package:lemon/components/primary_app_button.dart';
+import 'package:lemon/services/authentication_service.dart';
 import 'package:lemon/services/line_service.dart';
 import 'package:lemon/utilities/extensions.dart';
 
@@ -56,6 +57,10 @@ class _StudentLineInformationPageState
             final int waiting = (line['waiting'] ?? 0) as int;
             final bool open = (line['open'] ?? false) as bool;
             final List queue = (line['queue'] ?? []) as List;
+            final String currentPlace =
+                (queue.indexOf(AuthenticationService().getCurrentUID()) + 1)
+                    .toString()
+                    .padLeft(4, "0");
             final String description =
                 (line['description'] ?? "No description") as String;
 
@@ -117,6 +122,15 @@ class _StudentLineInformationPageState
                       icon: open
                           ? Icons.lock_open_outlined
                           : Icons.lock_outline_rounded,
+                    ),
+                    InfoRow(
+                      label: "Current Place".capitalized,
+                      value: open
+                          ? isInLine
+                                ? currentPlace
+                                : "N/A".capitalized
+                          : "N/A".capitalized,
+                      icon: Icons.group_rounded,
                       bottomBorder: false,
                     ),
                     const SizedBox(height: 16),

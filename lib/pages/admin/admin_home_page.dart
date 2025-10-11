@@ -14,7 +14,7 @@ class AdminHomePage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -29,7 +29,7 @@ class AdminHomePage extends StatelessWidget {
                         style: context.text.headlineSmall,
                       ),
                       Text(
-                        "lemon".capitalized,
+                        "lem0n".capitalized,
                         style: GoogleFonts.workSans(
                           textStyle: context.text.headlineSmall,
                           color: context.colors.primary,

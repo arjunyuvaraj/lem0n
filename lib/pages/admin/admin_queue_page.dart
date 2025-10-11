@@ -122,18 +122,26 @@ class _AdminQueuePageState extends State<AdminQueuePage> {
                                     final token =
                                         userData['token'] ?? 'No Token';
 
-                                    return ListTile(
-                                      style: ListTileStyle.list,
-                                      leading: Text(
-                                        token,
-                                        style: context.text.headlineSmall!
-                                            .copyWith(
-                                              fontSize: 17,
-                                              letterSpacing: 2,
-                                            ),
+                                    return GestureDetector(
+                                      onHorizontalDragStart: (details) => {
+                                        LineService().removeFromLine(
+                                          selectedLine!,
+                                          context,
+                                        ),
+                                      },
+                                      child: ListTile(
+                                        style: ListTileStyle.list,
+                                        leading: Text(
+                                          token,
+                                          style: context.text.headlineSmall!
+                                              .copyWith(
+                                                fontSize: 17,
+                                                letterSpacing: 2,
+                                              ),
+                                        ),
+                                        title: Text(userData['displayName']),
+                                        trailing: Text("#${index + 1}"),
                                       ),
-                                      title: Text(userData['displayName']),
-                                      trailing: Text("#${index + 1}"),
                                     );
                                   },
                                 );

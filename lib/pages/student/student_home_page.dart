@@ -31,7 +31,7 @@ class StudentHomePage extends StatelessWidget {
                         style: context.text.headlineSmall,
                       ),
                       Text(
-                        "lemon".capitalized,
+                        "lem0n".capitalized,
                         style: GoogleFonts.workSans(
                           textStyle: context.text.headlineSmall,
                           color: context.colors.primary,

@@ -20,15 +20,11 @@ class AdminCodePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // HEADER - Welcome header
-                Image(
-                  image: AssetImage('assets/images/welcome_image.png'),
-                  width: 300,
-                ),
                 Text(
                   "Welcome to".capitalized,
                   style: context.text.headlineSmall,
                 ),
-                Text("lemon".capitalized, style: context.text.headlineLarge),
+                Text("lem0n".capitalized, style: context.text.headlineLarge),
                 const SizedBox(height: 8),
                 // FORM - Get the admin code, and send it to the AuthService
                 AppTextField(

@@ -14,8 +14,6 @@ class CreditsPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image(image: AssetImage('assets/images/welcome_image.png')),
-
             Row(
               children: [
                 Text(
@@ -23,7 +21,7 @@ class CreditsPage extends StatelessWidget {
                   style: context.text.headlineSmall,
                 ),
                 Text(
-                  "lemon".capitalized,
+                  "lem0n".capitalized,
                   style: GoogleFonts.workSans(
                     textStyle: context.text.headlineSmall,
                     color: context.colors.primary,

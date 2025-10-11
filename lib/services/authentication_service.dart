@@ -5,11 +5,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lemon/pages/admin/admin_navigation_page.dart';
+import 'package:lemon/pages/landing_page.dart';
 import 'package:lemon/pages/select_school_page.dart';
 import 'package:lemon/pages/student/student_navigation_page.dart';
 import 'package:lemon/pages/welcome_page.dart';
 import 'package:lemon/utilities/codes.dart';
 import 'package:lemon/utilities/help_functions.dart';
+import 'dart:math' as math;
 
 class AuthenticationService {
   // VARIABLES: Instantiate GoogleSignIn, and create a variable to ensure we don't initialize multiple times
@@ -132,6 +134,30 @@ class AuthenticationService {
         context,
       );
       return null;
+    }
+  }
+
+  void deleteAccount(BuildContext context) async {
+    final navigator = Navigator.of(context);
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        displayMessageToUser("No user found.", context);
+        return;
+      }
+
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(user.email)
+          .delete();
+      await user.delete();
+
+      navigator.pushReplacement(
+        MaterialPageRoute(builder: (_) => LandingPage()),
+      );
+    } catch (e) {
+      displayMessageToUser("Account deletion failed: $e", context);
     }
   }
 
@@ -280,5 +306,79 @@ class AuthenticationService {
       throw Exception("User $userId not found");
     }
     return docSnapshot.data()!;
+  }
+
+  Future<void> addMockStudents(String school, {int count = 100}) async {
+    final firestore = FirebaseFirestore.instance;
+    final schoolDoc = firestore.collection(school).doc(school);
+    final studentsRef = schoolDoc.collection('Students');
+    final vegOutDoc = schoolDoc.collection('Lines').doc('Lines');
+
+    final random = math.Random();
+
+    const List<String> names = [
+      "Alex",
+      "Jamie",
+      "Taylor",
+      "Jordan",
+      "Morgan",
+      "Casey",
+      "Riley",
+      "Skyler",
+      "Avery",
+      "Quinn",
+      "Rowan",
+      "Reese",
+      "Dakota",
+      "Emerson",
+      "Finley",
+      "Hayden",
+      "Peyton",
+      "River",
+      "Sage",
+      "Tatum",
+    ];
+
+    const String chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final usedTokens = <String>{};
+    final queueIds = <String>[];
+
+    // --- Create mock students ---
+    for (int i = 0; i < count; i++) {
+      final name =
+          '${names[random.nextInt(names.length)]} ${String.fromCharCode(65 + random.nextInt(26))}.';
+      final email =
+          'student${DateTime.now().millisecondsSinceEpoch % 1000000}$i@example.com';
+
+      // generate a unique token
+      String token;
+      do {
+        token = List.generate(
+          4,
+          (_) => chars[random.nextInt(chars.length)],
+        ).join();
+      } while (usedTokens.contains(token));
+      usedTokens.add(token);
+
+      // create a new student doc
+      final studentDoc = studentsRef.doc();
+      await studentDoc.set({
+        'displayName': name,
+        'email': email,
+        'school': school,
+        'token': token,
+        'currentLine': 'VegOut',
+      });
+
+      queueIds.add(studentDoc.id);
+    }
+
+    // --- Append them to the VegOut queue field ---
+    await vegOutDoc.update({
+      'VegOut.queue': FieldValue.arrayUnion(queueIds),
+      'VegOut.waiting': FieldValue.increment(queueIds.length),
+    });
+
+    print('$count mock students added and queued in VegOut ✅');
   }
 }

@@ -6,8 +6,8 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   scaffoldBackgroundColor: Color(0xFFFFFFFF),
   colorScheme: ColorScheme.light(
-    primary: Color(0xFFFFBC03),
-    secondary: Color(0xFF4A7C59),
+    primary: Color(0xFFF6B100),
+    secondary: Color(0xFF202124),
     tertiary: Color(0xFFF6F5F4),
     surface: Colors.white,
     error: Color(0xFFC62828),

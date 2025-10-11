@@ -123,13 +123,6 @@ class LineService {
         .get();
 
     final data = linesDoc.data()?[lineName];
-    final userDocRef = FirebaseFirestore.instance
-        .collection(Codes().currentSchool)
-        .doc(Codes().currentSchool)
-        .collection("Students")
-        .doc(user.uid);
-    final userSnapshot = await userDocRef.get();
-    final userData = userSnapshot.data()!;
 
     if (data == null) {
       displayMessageToUser("Line does not exist.", context);

@@ -28,13 +28,18 @@ class LineCard extends StatelessWidget {
           color: context.colors.tertiary,
           borderRadius: BorderRadius.circular(24),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // TOP: title + description + status chips
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title.capitalized,
+                style: context.text.headlineSmall?.copyWith(fontSize: 14),
+              ),
+              const SizedBox(height: 12),
+              Row(
                 children: [
                   // Texts
                   Expanded(
@@ -42,13 +47,6 @@ class LineCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          title.capitalized,
-                          style: context.text.headlineSmall?.copyWith(
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
                         Text(description, style: context.text.bodyMedium),
                       ],
                     ),
@@ -78,8 +76,8 @@ class LineCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
