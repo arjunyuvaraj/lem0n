@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lemon/components/primary_app_button.dart';
+import 'package:lemon/components/queue_card.dart';
+import 'package:lemon/pages/admin/admin_serving_page.dart';
 import 'package:lemon/services/authentication_service.dart';
 import 'package:lemon/services/line_service.dart';
 import 'package:lemon/utilities/extensions.dart';
@@ -84,12 +87,22 @@ class _AdminQueuePageState extends State<AdminQueuePage> {
                       style: context.text.titleMedium,
                     ),
                     const SizedBox(height: 16),
+                    PrimaryAppButton(
+                      label: "Start Serving",
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AdminServingPage(lineName: selectedLine!),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: queue.isEmpty
                           ? const Center(child: Text("No one is in this line."))
                           : ListView.separated(
                               itemCount: queue.length,
-                              separatorBuilder: (_, __) => const Divider(),
+                              separatorBuilder: (_, _) => const Divider(),
                               itemBuilder: (context, index) {
                                 final userId = queue[index];
                                 return FutureBuilder<Map<String, dynamic>>(
@@ -129,18 +142,18 @@ class _AdminQueuePageState extends State<AdminQueuePage> {
                                           context,
                                         ),
                                       },
-                                      child: ListTile(
-                                        style: ListTileStyle.list,
-                                        leading: Text(
-                                          token,
-                                          style: context.text.headlineSmall!
-                                              .copyWith(
-                                                fontSize: 17,
-                                                letterSpacing: 2,
-                                              ),
-                                        ),
-                                        title: Text(userData['displayName']),
-                                        trailing: Text("#${index + 1}"),
+                                      child: QueueCard(
+                                        index: index,
+                                        token: token,
+                                        userData: userData,
+                                        button: false,
+                                        onTap: () => {
+                                          LineService().removeFromLine(
+                                            selectedLine!,
+                                            context,
+                                            userId,
+                                          ),
+                                        },
                                       ),
                                     );
                                   },

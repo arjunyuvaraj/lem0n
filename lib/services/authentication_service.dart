@@ -378,7 +378,5 @@ class AuthenticationService {
       'VegOut.queue': FieldValue.arrayUnion(queueIds),
       'VegOut.waiting': FieldValue.increment(queueIds.length),
     });
-
-    print('$count mock students added and queued in VegOut ✅');
   }
 }

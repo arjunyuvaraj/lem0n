@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lemon/authentication/authentication_page.dart';
 import 'package:lemon/firebase_options.dart';
-import 'package:lemon/services/authentication_service.dart';
 import 'package:lemon/theme/light_theme.dart';
 
 void main() async {

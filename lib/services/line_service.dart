@@ -75,11 +75,16 @@ class LineService {
   }
 
   // METHOD: Remove the user from the current line
-  Future<void> removeFromLine(String lineName, BuildContext context) async {
+  Future<void> removeFromLine(
+    String lineName,
+    BuildContext context, [
+    String? uid,
+  ]) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
-
-    final uid = user.uid;
+    if (uid == "") {
+      uid = user.uid;
+    }
 
     final linesDocRef = FirebaseFirestore.instance
         .collection(Codes().currentSchool)
@@ -100,9 +105,9 @@ class LineService {
 
     List<dynamic> queue = lineData['queue'] ?? [];
 
-    if (!(await checkLine(lineName, context))) return;
+    if (!(await checkLine(lineName, context, uid))) return;
 
-    queue.remove(user.uid);
+    queue.remove(uid);
     await linesDocRef.update({
       "$lineName.queue": queue,
       "$lineName.waiting": queue.length,
@@ -111,9 +116,16 @@ class LineService {
   }
 
   // METHOD: Checks if the current user is in the line
-  Future<bool> checkLine(String lineName, BuildContext context) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return false;
+  Future<bool> checkLine(
+    String lineName,
+    BuildContext context, [
+    String? uid,
+  ]) async {
+    if (uid == "") {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return false;
+      uid = user.uid;
+    }
 
     final linesDoc = await FirebaseFirestore.instance
         .collection(Codes().currentSchool)
@@ -130,7 +142,7 @@ class LineService {
     }
 
     final queue = List<String>.from(data['queue'] ?? []);
-    return queue.contains(user.uid);
+    return queue.contains(uid);
   }
 
   Future<void> openLine(String name, BuildContext context) async {
