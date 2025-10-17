@@ -42,7 +42,7 @@ class _StudentLineInformationPageState
               return const Center(child: Text("No lines available right now."));
             }
 
-            // Ensure selectedLine is valid
+            // CHECK: Make sure line is valid
             final lineNames = allLines.keys.toList();
             if (selectedLine == null || !lineNames.contains(selectedLine)) {
               selectedLine = lineNames.isNotEmpty ? lineNames.first : null;
@@ -52,7 +52,7 @@ class _StudentLineInformationPageState
               return const Center(child: Text("This line was deleted."));
             }
 
-            // Safely extract line data
+            // CHECK: Get the data safely
             final line = allLines[selectedLine] as Map<String, dynamic>? ?? {};
             final int waiting = (line['waiting'] ?? 0) as int;
             final bool open = (line['open'] ?? false) as bool;
@@ -64,6 +64,7 @@ class _StudentLineInformationPageState
             final String description =
                 (line['description'] ?? "No description") as String;
 
+            // FIREBASE: Get the user
             final user = FirebaseAuth.instance.currentUser;
             final isInLine = user != null && queue.contains(user.uid);
             return Center(
@@ -103,6 +104,7 @@ class _StudentLineInformationPageState
                       ),
                     ),
                     const SizedBox(height: 4),
+                    // DATA: Show the data neatly
                     Text(
                       description,
                       textAlign: TextAlign.center,

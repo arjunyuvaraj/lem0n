@@ -5,8 +5,13 @@ import 'package:lemon/services/authentication_service.dart';
 import 'package:lemon/services/line_service.dart';
 import 'package:lemon/utilities/extensions.dart';
 
+/* TODO: Comment and work in progress
+- Add the notification feature for the students
+- Work on the call feature(add it in LineService)
+
+*/
 class AdminServingPage extends StatefulWidget {
-  final String lineName; // line is passed in
+  final String lineName;
 
   const AdminServingPage({super.key, required this.lineName});
 

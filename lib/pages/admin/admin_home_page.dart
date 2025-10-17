@@ -18,7 +18,7 @@ class AdminHomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // HEADER
+              // HEADER: Home page showing all of the lines
               Column(
                 children: [
                   Row(
@@ -66,7 +66,7 @@ class AdminHomePage extends StatelessWidget {
                 ],
               ),
 
-              // LINES
+              // LINES: Use a stream builder to iterate over all of the lines
               Expanded(
                 child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                   stream: FirebaseFirestore.instance

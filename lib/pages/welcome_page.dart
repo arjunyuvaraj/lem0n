@@ -19,6 +19,7 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // HEADER:
                 Text(
                   "Welcome to".capitalized,
                   style: context.text.headlineSmall,

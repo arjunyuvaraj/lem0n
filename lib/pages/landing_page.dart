@@ -14,7 +14,7 @@ class LandingPage extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          // HERO
+          // HERO: Header image with gradient background as well as title and short description
           SliverAppBar(
             expandedHeight: MediaQuery.of(context).size.height,
             flexibleSpace: FlexibleSpaceBar(

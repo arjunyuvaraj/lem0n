@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/utilities/extensions.dart';
 
+// TODO: Flush out credits page
 class CreditsPage extends StatelessWidget {
   const CreditsPage({super.key});
 

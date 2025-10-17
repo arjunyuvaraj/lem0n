@@ -25,6 +25,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
         child: StreamBuilder<Map<String, dynamic>?>(
           stream: LineService().getAllLinesStream(),
           builder: (context, snapshot) {
+            // CHECK: Make sure the snapshot has data and was successfully retrieved
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -41,7 +42,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
               return const Center(child: Text("No lines available right now."));
             }
 
-            // Ensure selectedLine is valid
+            // CHECK: Make sure the line is properly retrieved
             final lineNames = allLines.keys.toList();
             if (selectedLine == null || !lineNames.contains(selectedLine)) {
               selectedLine = lineNames.isNotEmpty ? lineNames.first : null;
@@ -51,7 +52,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
               return const Center(child: Text("This line was deleted."));
             }
 
-            // Safely extract line data
+            // GET: SAFELY get all of the data
             final line = allLines[selectedLine] as Map<String, dynamic>? ?? {};
             final int waiting = (line['waiting'] ?? 0) as int;
             final bool open = (line['open'] ?? false) as bool;
@@ -65,7 +66,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Let's look at ".capitalized),
-
+                    // DROPDOWN: To switch between the different lines
                     DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: selectedLine,
@@ -104,6 +105,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
+                    // Line information
                     const SizedBox(height: 16),
                     InfoRow(
                       label: "People Waiting".capitalized,
@@ -130,6 +132,8 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                       },
                     ),
                     const SizedBox(height: 16),
+                    // BUTTONS: The following buttons are for basic CRUD actions
+                    // Open/Close line toggle
                     SecondaryAppButton(
                       buttonColor: open
                           ? context.colors.error
@@ -146,6 +150,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                       },
                     ),
                     const SizedBox(height: 8),
+                    // Rename Line
                     SecondaryAppButton(
                       buttonColor: open
                           ? context.colors.error
@@ -213,6 +218,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                       },
                     ),
                     SizedBox(height: 36),
+                    // Delete Button
                     GestureDetector(
                       onTap: () => {LineService().deleteLine(selectedLine!)},
                       child: Column(

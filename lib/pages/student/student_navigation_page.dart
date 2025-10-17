@@ -29,10 +29,8 @@ class StudentNavigationPageState extends State<StudentNavigationPage> {
     Codes().setStatus(true);
   }
 
-  /// Public: change the current tab
   void changeIndex(int index) => setState(() => _selectedIndex = index);
 
-  /// Public: switch to a tab and optionally set the store name for the Line page
   void switchTo({required int index, String? store}) {
     setState(() {
       _selectedIndex = index;
@@ -59,7 +57,6 @@ class StudentNavigationPageState extends State<StudentNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Use IndexedStack so non-visible pages keep their state (no big rebuilds)
     final children = <Widget>[
       StudentHomePage(),
       _linePage(),

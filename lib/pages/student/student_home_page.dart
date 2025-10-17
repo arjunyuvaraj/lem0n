@@ -20,7 +20,7 @@ class StudentHomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // HEADER
+              // HEADER: Title and description
               Column(
                 children: [
                   Row(
@@ -68,7 +68,7 @@ class StudentHomePage extends StatelessWidget {
                 ],
               ),
 
-              // LIST (flexible)
+              // LIST: Go through all of the lines
               Expanded(
                 child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                   stream: LineService().getLines(Codes().currentSchool),
@@ -101,7 +101,8 @@ class StudentHomePage extends StatelessWidget {
                           waiting: waiting,
                           status: open,
                           onTap: () {
-                            if (!open) return; // guard
+                            // TODO: Fix method for BOTH admin and student!
+                            if (!open) return;
                             final navState = context
                                 .findAncestorStateOfType<
                                   StudentNavigationPageState

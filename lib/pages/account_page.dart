@@ -55,7 +55,7 @@ class AccountPage extends StatelessWidget {
                   vertical: 24,
                 ),
                 children: [
-                  // Profile Header
+                  // HEADER: Profile header with name and profile picture
                   Center(
                     child: Column(
                       children: [
@@ -110,7 +110,7 @@ class AccountPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Email, Username, and School
+                  // DATA: Show the username, password, school, and email
                   Card(
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -137,8 +137,7 @@ class AccountPage extends StatelessWidget {
                         InfoRow(
                           bottomBorder: false,
                           label: "Role",
-                          value:
-                              userData['role'] ?? 'Student', // NEW: show role
+                          value: userData['role'] ?? 'Student',
                           icon: Icons.shield_outlined,
                         ),
                       ],
@@ -147,7 +146,7 @@ class AccountPage extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // Actions Section Header
+                  // FOOTER: All of the actions
                   Text(
                     "ACTIONS",
                     style: textTheme.labelSmall?.copyWith(

@@ -21,6 +21,7 @@ class _AdminQueuePageState extends State<AdminQueuePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        // STREAM-BUILDER: Use a stream builder to get all of the lines, and their names
         child: StreamBuilder<Map<String, dynamic>?>(
           stream: LineService().getAllLinesStream(),
           builder: (context, snapshot) {
@@ -105,6 +106,12 @@ class _AdminQueuePageState extends State<AdminQueuePage> {
                               separatorBuilder: (_, _) => const Divider(),
                               itemBuilder: (context, index) {
                                 final userId = queue[index];
+                                /*
+                                  FUTURE-BUILDER: Use a future builder to get all of the people waiting in the line
+                                    1. Get the UID from the user
+                                    2. Use line service to get the line
+                                    3. Show it to the user
+                                */
                                 return FutureBuilder<Map<String, dynamic>>(
                                   future: AuthenticationService()
                                       .getUserDataById(userId),

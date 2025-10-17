@@ -23,6 +23,7 @@ class AdminNewLinePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // HEADER: Title and Description
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -43,6 +44,7 @@ class AdminNewLinePage extends StatelessWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     Text(
                       "Type in the name, and a quick description of what it's for!",
                       textAlign: TextAlign.center,
@@ -52,7 +54,8 @@ class AdminNewLinePage extends StatelessWidget {
                         letterSpacing: getLetterSpacing(18, 15),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
+                    // FORM: Get the name and description and add it to the list of lines
                     AppTextField(
                       hintText: "Name",
                       controller: nameController,
