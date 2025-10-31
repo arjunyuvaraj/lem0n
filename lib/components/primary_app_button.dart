@@ -27,7 +27,11 @@ class PrimaryAppButton extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 42),
-          child: Text(label, style: context.text.bodySmall),
+          child: Text(
+            label,
+            style: context.text.bodySmall,
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
     );

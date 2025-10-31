@@ -105,7 +105,7 @@ class _AdminLineInformationPageState extends State<AdminLineInformationPage> {
                         fontStyle: FontStyle.italic,
                       ),
                     ),
-                    // Line information
+                    // DATA: Show the line information
                     const SizedBox(height: 16),
                     InfoRow(
                       label: "People Waiting".capitalized,

@@ -1,17 +1,18 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lemon/pages/admin/admin_navigation_page.dart';
 import 'package:lemon/pages/landing_page.dart';
 import 'package:lemon/pages/select_school_page.dart';
-import 'package:lemon/pages/student/student_navigation_page.dart';
+import 'package:lemon/pages/student/user_navigation_page.dart';
 import 'package:lemon/pages/welcome_page.dart';
 import 'package:lemon/utilities/codes.dart';
 import 'package:lemon/utilities/help_functions.dart';
-import 'dart:math' as math;
 
 class AuthenticationService {
   // VARIABLES: Instantiate GoogleSignIn, and create a variable to ensure we don't initialize multiple times
@@ -26,8 +27,36 @@ class AuthenticationService {
     }
   }
 
-  // METHOD: Saves the user to firestore
+  Future<void> saveFcmToken() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
+    final school = Codes().currentSchool; // From your Codes class
+    final userRef = FirebaseFirestore.instance
+        .collection(school)
+        .doc(school)
+        .collection('Students')
+        .doc(user.uid);
+
+    final messaging = FirebaseMessaging.instance;
+
+    // ASK: For permission (important for iOS + Android 13+)
+    await messaging.requestPermission();
+
+    // GET: The token
+    final token = await messaging.getToken();
+    if (token == null) return;
+
+    // SAVE: Token to Firestore
+    await userRef.set({'fcmToken': token}, SetOptions(merge: true));
+
+    // LISTEN: For automatic token refreshes
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      userRef.set({'fcmToken': newToken}, SetOptions(merge: true));
+    });
+  }
+
+  // METHOD: Saves the user to Firestore
   Future<void> saveUserToFirestore({
     required String displayName,
     required String school,
@@ -72,7 +101,6 @@ class AuthenticationService {
 
     for (int i = 0; i < 10000; i++) {
       final token = getRandomToken();
-
       final querySnapshot = await studentsRef
           .where('token', isEqualTo: token)
           .limit(1)
@@ -82,17 +110,18 @@ class AuthenticationService {
         return token;
       }
     }
-    throw Exception(e);
+
+    throw Exception("Unable to generate unique token");
   }
 
   // METHOD: Sign in the user
   void signInWithGoogle(BuildContext context) async {
-    // GOOGLE: Start up the google pop up
+    // GOOGLE: Start up the Google popup
     await initializeGoogleSignIn();
 
     // TRY-CATCH: Prevent any unexpected errors
     try {
-      // GOOGLE: Get the users email
+      // GOOGLE: Get the user's email
       final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
         scopeHint: ['email'], // Get the email
       );
@@ -100,13 +129,15 @@ class AuthenticationService {
       // GOOGLE: Get the ID Token to give to Firebase
       final idToken = googleUser.authentication.idToken;
 
-      // FIREBASE: Make sure it's stored with google
+      // FIREBASE: Make sure it's stored with Google
       final credential = GoogleAuthProvider.credential(idToken: idToken);
 
       // USER: Sign the user in
       final userCredential = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
+
+      await saveFcmToken();
 
       // CHECK: If the user is new, have them fill out which school they are from
       if (userCredential.additionalUserInfo?.isNewUser ?? false) {
@@ -126,14 +157,14 @@ class AuthenticationService {
         'Google Sign-In error: ${e.code} / ${e.description}',
         context,
       );
-      return null;
+      return;
     } catch (e) {
       // ERROR: Some error occurred in general
       displayMessageToUser(
         'Unexpected error during Google Sign-In: $e',
         context,
       );
-      return null;
+      return;
     }
   }
 
@@ -151,6 +182,7 @@ class AuthenticationService {
           .collection("Users")
           .doc(user.email)
           .delete();
+
       await user.delete();
 
       navigator.pushReplacement(
@@ -169,6 +201,7 @@ class AuthenticationService {
 
       // FIREBASE: Sign out from Firebase
       await FirebaseAuth.instance.signOut();
+
       // NAVIGATE: Re-route to the welcome page
       Navigator.push(
         context,
@@ -182,7 +215,7 @@ class AuthenticationService {
 
   // METHOD: Sign in method for Administration
   void signInWithCode(String code, BuildContext context) async {
-    // TRY-CATCH: Admin's login with a code. If the code is correct the program automatically enters a username and password to log them in
+    // TRY-CATCH: Admin login with a code.
     try {
       // CHECK: Make sure the correct admin code was entered
       if (code == Codes().adminCode) {
@@ -196,10 +229,10 @@ class AuthenticationService {
         final uid = FirebaseAuth.instance.currentUser?.uid;
         if (uid != null) {
           final adminDocRef = FirebaseFirestore.instance
-              .collection(Codes().currentSchool) // top-level collection
-              .doc(Codes().currentSchool) // school document
-              .collection("Admin") // subcollection for admins
-              .doc(uid); // admin document = uid
+              .collection(Codes().currentSchool)
+              .doc(Codes().currentSchool)
+              .collection("Admin")
+              .doc(uid);
 
           await adminDocRef.set({
             'email': Codes().adminUsername,
@@ -207,7 +240,7 @@ class AuthenticationService {
           }, SetOptions(merge: true));
         }
 
-        // NAVIGATE: Go to the AdminHomePage()
+        // NAVIGATE: Go to the AdminHomePage
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => AdminNavigationPage()),
@@ -221,6 +254,7 @@ class AuthenticationService {
   // METHOD: Sign out method for Administration
   void signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => WelcomePage()),
@@ -234,9 +268,8 @@ class AuthenticationService {
     final currentSchool = codes.currentSchool;
 
     if (codes.status) {
-      // User is a STUDENT
+      // USER: Is a STUDENT
       final uid = FirebaseAuth.instance.currentUser?.uid;
-
       if (uid == null) {
         throw Exception("No user is currently signed in.");
       }
@@ -248,9 +281,8 @@ class AuthenticationService {
           .collection("Students")
           .doc(uid);
     } else {
-      // User is an ADMIN
+      // USER: Is an ADMIN
       final uid = FirebaseAuth.instance.currentUser?.uid;
-
       if (uid == null) {
         throw Exception("No admin is currently signed in.");
       }
@@ -264,10 +296,11 @@ class AuthenticationService {
     }
   }
 
-  // METHOD: Get's the current UID
+  // METHOD: Get the current UID
   String getCurrentUID() {
     // USER: Get the current user
     final user = FirebaseAuth.instance.currentUser!;
+
     // OUTPUT: Return the UID
     return user.uid;
   }
@@ -281,7 +314,7 @@ class AuthenticationService {
         .doc(currentSchool)
         .collection(isStudent ? "Students" : "Admin")
         .where("displayName", isEqualTo: displayName)
-        .limit(1) // Since you're only looking for one user
+        .limit(1)
         .get();
 
     if (querySnapshot.docs.isEmpty) {
@@ -293,7 +326,6 @@ class AuthenticationService {
 
   Future<Map<String, dynamic>> getUserDataById(String userId) async {
     final currentSchool = Codes().currentSchool;
-
     final docRef = FirebaseFirestore.instance
         .collection(currentSchool)
         .doc(currentSchool)
@@ -301,10 +333,10 @@ class AuthenticationService {
         .doc(userId);
 
     final docSnapshot = await docRef.get();
-
-    if (!(docSnapshot.exists)) {
+    if (!docSnapshot.exists) {
       throw Exception("User $userId not found");
     }
+
     return docSnapshot.data()!;
   }
 
@@ -347,10 +379,11 @@ class AuthenticationService {
     for (int i = 0; i < count; i++) {
       final name =
           '${names[random.nextInt(names.length)]} ${String.fromCharCode(65 + random.nextInt(26))}.';
+
       final email =
           'student${DateTime.now().millisecondsSinceEpoch % 1000000}$i@example.com';
 
-      // generate a unique token
+      // GENERATE: A unique token
       String token;
       do {
         token = List.generate(
@@ -358,9 +391,10 @@ class AuthenticationService {
           (_) => chars[random.nextInt(chars.length)],
         ).join();
       } while (usedTokens.contains(token));
+
       usedTokens.add(token);
 
-      // create a new student doc
+      // CREATE: A new student doc
       final studentDoc = studentsRef.doc();
       await studentDoc.set({
         'displayName': name,

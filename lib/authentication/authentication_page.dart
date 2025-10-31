@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lemon/pages/admin/admin_navigation_page.dart';
 import 'package:lemon/pages/landing_page.dart';
-import 'package:lemon/pages/student/student_navigation_page.dart';
+import 'package:lemon/pages/student/user_navigation_page.dart';
 import 'package:lemon/utilities/codes.dart';
 
 class AuthenticationPage extends StatelessWidget {

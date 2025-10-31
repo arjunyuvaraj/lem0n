@@ -26,7 +26,7 @@ class LineService {
     }, SetOptions(merge: true));
   }
 
-  // METHOD: Get's the current 'Lines' collection
+  // METHOD: Gets the current 'Lines' collection
   Stream<DocumentSnapshot<Map<String, dynamic>>> getLines(String school) {
     return FirebaseFirestore.instance
         .collection(school)
@@ -36,7 +36,7 @@ class LineService {
         .snapshots();
   }
 
-  // METHOD: With the 'lineName' adds the current user to the Line
+  // METHOD: With the 'lineName', adds the current user to the line
   Future<void> joinLine(String lineName, BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -57,11 +57,11 @@ class LineService {
 
     final lineSnapshot = await linesDocRef.get();
     final lineData = lineSnapshot.data()?[lineName];
-
     if (lineData == null) return;
 
     List<dynamic> queue = lineData['queue'] ?? [];
 
+    // CHECK: If user already in line, return early
     if (await checkLine(lineName, context)) return;
 
     queue.add(user.uid);
@@ -82,6 +82,7 @@ class LineService {
   ]) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
+
     if (uid == "") {
       uid = user.uid;
     }
@@ -100,18 +101,20 @@ class LineService {
 
     final lineSnapshot = await linesDocRef.get();
     final lineData = lineSnapshot.data()?[lineName];
-
     if (lineData == null) return;
 
     List<dynamic> queue = lineData['queue'] ?? [];
 
+    // CHECK: If user not in line, return early
     if (!(await checkLine(lineName, context, uid))) return;
 
     queue.remove(uid);
+
     await linesDocRef.update({
       "$lineName.queue": queue,
       "$lineName.waiting": queue.length,
     });
+
     await userDocRef.update({'currentLine': ""});
   }
 
@@ -135,7 +138,6 @@ class LineService {
         .get();
 
     final data = linesDoc.data()?[lineName];
-
     if (data == null) {
       displayMessageToUser("Line does not exist.", context);
       return false;
@@ -145,6 +147,7 @@ class LineService {
     return queue.contains(uid);
   }
 
+  // METHOD: Opens a line
   Future<void> openLine(String name, BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -154,11 +157,13 @@ class LineService {
         .doc(Codes().currentSchool)
         .collection("Lines")
         .doc("Lines");
+
     await linesDocRef.set({
       name: {"open": true},
     }, SetOptions(merge: true));
   }
 
+  // METHOD: Closes a line
   Future<void> closeLine(String name, BuildContext context) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -174,6 +179,7 @@ class LineService {
     }, SetOptions(merge: true));
   }
 
+  // METHOD: Stream for a specific line
   Stream<Map<String, dynamic>?> getLineStream(String lineName) {
     return FirebaseFirestore.instance
         .collection(Codes().currentSchool)
@@ -184,6 +190,7 @@ class LineService {
         .map((snapshot) => snapshot.data());
   }
 
+  // METHOD: Stream for all lines
   Stream<Map<String, dynamic>?> getAllLinesStream() {
     return FirebaseFirestore.instance
         .collection(Codes().currentSchool)
@@ -192,6 +199,18 @@ class LineService {
         .doc("Lines")
         .snapshots()
         .map((snapshot) => snapshot.data());
+  }
+
+  // METHOD: Get all lines (one-time fetch)
+  Future<Map<String, dynamic>?> getAllLines() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection(Codes().currentSchool)
+        .doc(Codes().currentSchool)
+        .collection("Lines")
+        .doc("Lines")
+        .get();
+
+    return snapshot.data();
   }
 
   // METHOD: Rename a line
@@ -204,14 +223,15 @@ class LineService {
 
     final snapshot = await linesDocRef.get();
     final data = snapshot.data();
+
     if (data == null || !data.containsKey(oldName)) return;
 
     final lineData = data[oldName];
 
-    // Copy old line data to new name
+    // COPY: Old line data to new name
     await linesDocRef.update({newName: lineData});
 
-    // Delete the old line
+    // DELETE: The old line
     await linesDocRef.update({oldName: FieldValue.delete()});
   }
 

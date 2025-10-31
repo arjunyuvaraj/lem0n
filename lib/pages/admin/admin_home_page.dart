@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lemon/components/line_card.dart';
-import 'package:lemon/pages/student/student_navigation_page.dart';
+import 'package:lemon/pages/student/user_navigation_page.dart';
 import 'package:lemon/utilities/codes.dart';
 import 'package:lemon/utilities/extensions.dart';
 
